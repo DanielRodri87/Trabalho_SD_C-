@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  master:
+    build:
+      context: .
+      dockerfile: Dockerfile.master
+    container_name: master-server
+    ports:
+      - "8080:8080"
+    networks:
+      - distributed-network
+    depends_on:
+      slave-letters:
+        condition: service_healthy
+      slave-numbers:
+        condition: service_healthy
+    environment:
+      - SLAVE1_URL=http://slave-letters:8081
+      - SLAVE2_URL=http://slave-numbers:8082
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  slave-letters:
+    build:
+      context: .
+      dockerfile: Dockerfile.slave1
+    container_name: slave-letters
+    ports:
+      - "8081:8081"
+    networks:
+      - distributed-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  slave-numbers:
+    build:
+      context: .
+      dockerfile: Dockerfile.slave2
+    container_name: slave-numbers
+    ports:
+      - "8082:8082"
+    networks:
+      - distributed-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  distributed-network:
+    driver: bridge

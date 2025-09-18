@@ -1,0 +1,41 @@
+# Dockerfile para o Servidor Escravo Letras
+FROM ubuntu:22.04
+
+# Evitar prompts interativos durante instalação
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Instalar dependências
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Copiar código fonte
+COPY vendor/ ./vendor/
+COPY slave_letters/ ./slave_letters/
+
+# Compilar o servidor escravo letras
+RUN g++ -std=c++17 -O2 \
+    -I./vendor \
+    -o slave_letters_server \
+    slave_letters/slave_letters.cpp \
+    -lpthread
+
+# Criar usuário não-root para segurança
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+RUN chown -R appuser:appuser /app
+USER appuser
+
+# Expor porta
+EXPOSE 8081
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8081/health || exit 1
+
+# Comando para executar o servidor
+CMD ["./slave_letters_server"]

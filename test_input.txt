@@ -1,0 +1,7 @@
+Hello World 123!
+Esta é uma string de teste com números: 456, 789.
+Contém letras maiúsculas: ABCDEF
+Contém letras minúsculas: ghijkl
+E alguns símbolos especiais: @#$%^&*()
+Mais números para teste: 2024, 1337, 42
+Fim do arquivo de teste.

@@ -1,0 +1,17 @@
+Hello World 123!
+Esta é uma string de teste para o sistema distribuído.
+Contém letras MAIÚSCULAS e minúsculas.
+Também contém números: 456, 789, 2024.
+Símbolos especiais: @#$%^&*()_+-=[]{}|;:'",./<>?
+Mais alguns números para teste: 1337, 42, 999.
+E mais algumas letras: abcdefghijklmnopqrstuvwxyz
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+
+Este arquivo será processado pelos escravos:
+- Escravo 1 contará todas as letras (a-z, A-Z)
+- Escravo 2 contará todos os dígitos (0-9)
+
+O mestre coordenará o processamento em paralelo usando threads
+e retornará o resultado consolidado em formato JSON.
+
+Fim do arquivo de teste.
